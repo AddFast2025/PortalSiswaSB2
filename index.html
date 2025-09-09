@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Musik Play Pause</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: linear-gradient(135deg, #89f7fe, #66a6ff);
+      font-family: sans-serif;
+    }
+
+    .btn-music {
+      width: 120px;
+      height: 120px;
+      border: none;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+      font-size: 2rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-music:hover {
+      transform: scale(1.1);
+      box-shadow: 0 12px 20px rgba(0,0,0,0.3);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Tombol Play/Pause -->
+  <button class="btn-music" id="musicBtn">▶</button>
+
+  <!-- Audio -->
+  <audio id="myMusic" src="FULL.mp3"></audio>
+
+  <script>
+    const music = document.getElementById("myMusic");
+    const btn = document.getElementById("musicBtn");
+
+    let isPlaying = false;
+
+    btn.addEventListener("click", () => {
+      if (isPlaying) {
+        music.pause();
+        btn.textContent = "▶"; // ikon Play
+      } else {
+        music.play();
+        btn.textContent = "⏸"; // ikon Pause
+      }
+      isPlaying = !isPlaying;
+    });
+  </script>
+
+</body>
+</html>
