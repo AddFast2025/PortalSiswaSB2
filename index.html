@@ -3,58 +3,159 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Musik Play Pause</title>
+  <title>Pemutar Musik Bagian Loop</title>
   <style>
-    body {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
+    body { 
+      font-family: sans-serif; 
+      text-align: center; 
+      padding: 40px; 
       background: linear-gradient(135deg, #89f7fe, #66a6ff);
-      font-family: sans-serif;
     }
-
-    .btn-music {
-      width: 120px;
-      height: 120px;
+    button {
+      padding: 10px 20px;
+      margin: 10px;
+      font-size: 16px;
       border: none;
-      border-radius: 50%;
-      background: #fff;
-      box-shadow: 0 8px 15px rgba(0,0,0,0.2);
-      font-size: 2rem;
+      border-radius: 8px;
       cursor: pointer;
-      transition: all 0.3s ease;
+      background: #fff;
+      color: #333;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      transition: all 0.2s ease;
     }
-
-    .btn-music:hover {
-      transform: scale(1.1);
-      box-shadow: 0 12px 20px rgba(0,0,0,0.3);
+    button:hover { 
+      background: #f0f0f0; 
+      transform: scale(1.05);
+    }
+    #status {
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #222;
+    }
+    #currentPart {
+      margin: 10px 0;
+      font-size: 18px;
+      color: #111;
+      font-style: italic;
+    }
+    #progress-container {
+      margin: 20px auto;
+      width: 80%;
+      height: 10px;
+      background: rgba(255,255,255,0.6);
+      border-radius: 5px;
+      cursor: pointer;
+      position: relative;
+    }
+    #progress {
+      height: 100%;
+      width: 0%;
+      background: #333;
+      border-radius: 5px;
+      transition: width 0.1s linear;
     }
   </style>
 </head>
 <body>
 
-  <!-- Tombol Play/Pause -->
-  <button class="btn-music" id="musicBtn">▶</button>
+  <h1>Qs Al Waqiah</h1>
+  <div id="currentPart">Belum memilih bagian</div>
 
-  <!-- Audio -->
-  <audio id="myMusic" src="FULL.mp3"></audio>
+  <audio id="myMusic" src="musik.mp3"></audio>
+
+  <!-- Tombol kontrol bagian -->
+  <div>
+    <button onclick="playPart(15,109,'Ayat 1 - 20')">Ayat 1 - 20 </button>
+    <button onclick="playPart(109,198,'Ayat 21 - 40')">Ayat 21 - 40  </button>
+    <button onclick="playPart(198,308,'Ayat 41 - 60')">Ayat 41 - 60 </button>
+    <button onclick="playPart(308,429,'Ayat 61 - 80')">Ayat 61 - 80 </button>
+    <button onclick="playPart(429,545,'Ayat 81 - 96')">Ayat 81 - 96 </button>
+  </div>
+
+  <!-- Tombol Play/Pause umum -->
+  <div style="margin-top: 20px;">
+    <button id="playPauseBtn">▶ Play/Pause</button>
+  </div>
+
+  <!-- Status waktu -->
+  <div id="status">⏳ Belum diputar</div>
+
+  <!-- Progress bar -->
+  <div id="progress-container">
+    <div id="progress"></div>
+  </div>
 
   <script>
     const music = document.getElementById("myMusic");
-    const btn = document.getElementById("musicBtn");
+    const status = document.getElementById("status");
+    const progressContainer = document.getElementById("progress-container");
+    const progress = document.getElementById("progress");
+    const playPauseBtn = document.getElementById("playPauseBtn");
+    const currentPart = document.getElementById("currentPart");
 
+    let endTime = 0;
+    let startTime = 0;
+    let totalDuration = 0;
     let isPlaying = false;
 
-    btn.addEventListener("click", () => {
+    // Ambil total durasi musik
+    music.addEventListener("loadedmetadata", () => {
+      totalDuration = Math.floor(music.duration);
+    });
+
+    function formatTime(sec) {
+      let min = Math.floor(sec / 60);
+      let s = sec % 60;
+      if (s < 10) s = "0" + s;
+      return `${min}:${s}`;
+    }
+
+    function playPart(start, end, label) {
+      startTime = start;
+      endTime = end;
+      music.currentTime = start;
+      music.play();
+      playPauseBtn.textContent = "⏸ Pause";
+      isPlaying = true;
+      currentPart.textContent = `▶ Sedang memutar ${label}`;
+    }
+
+    // Tombol Play/Pause
+    playPauseBtn.addEventListener("click", () => {
       if (isPlaying) {
         music.pause();
-        btn.textContent = "▶"; // ikon Play
+        playPauseBtn.textContent = "▶ Play";
       } else {
         music.play();
-        btn.textContent = "⏸"; // ikon Pause
+        playPauseBtn.textContent = "⏸ Pause";
       }
       isPlaying = !isPlaying;
+    });
+
+    // Update status dan progress bar
+    music.addEventListener("timeupdate", () => {
+      let cur = Math.floor(music.currentTime);
+
+      if (totalDuration > 0) {
+        status.textContent = `▶ ${formatTime(cur)} / ${formatTime(totalDuration)}`;
+        let percent = (cur / totalDuration) * 100;
+        progress.style.width = percent + "%";
+      }
+
+      // Kalau sudah sampai akhir bagian → kembali ke awal bagian
+      if (music.currentTime >= endTime && endTime > 0) {
+        music.currentTime = startTime;
+        music.play();
+      }
+    });
+
+    // Klik progress bar untuk lompat
+    progressContainer.addEventListener("click", (e) => {
+      const width = progressContainer.clientWidth;
+      const clickX = e.offsetX;
+      const seekTime = (clickX / width) * totalDuration;
+      music.currentTime = seekTime;
     });
   </script>
 
