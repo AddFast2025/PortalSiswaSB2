@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Soal dan Latihan - SDN Sidobandung II</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, Arial, sans-serif;
+      text-align: center;
+      color: #0f172a;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+      background: linear-gradient(160deg, #e0f7fa, #b3e5fc, #81d4fa);
+    }
+
+    h1 {
+      font-size: clamp(22px, 5vw, 32px);
+      margin-bottom: 24px;
+      font-weight: 700;
+    }
+
+    .menu {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 14px;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .menu a {
+      display: block;
+      padding: 14px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 15px;
+      color: white;
+      background: #0284c7;
+      box-shadow: 0 6px 16px rgba(2, 132, 199, 0.35);
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .menu a:hover {
+      background: #0369a1;
+    }
+
+    .menu a:active {
+      transform: scale(0.98);
+    }
+
+    a.kembali {
+      margin-top: 30px;
+      display: inline-block;
+      padding: 10px 20px;
+      background: #0ea5e9;
+      color: white;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 600;
+      box-shadow: 0 4px 10px rgba(14,165,233,0.3);
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    a.kembali:hover {
+      background: #0284c7;
+    }
+
+    a.kembali:active {
+      transform: scale(0.97);
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Soal dan Latihan<br>SD Negeri Sidobandung II</h1>
+
+    <nav class="menu">
+      <a href="soal_kelas1.html">Kelas 1</a>
+      <a href="soal_kelas2.html">Kelas 2</a>
+      <a href="soal_kelas3.html">Kelas 3</a>
+      <a href="soal_kelas4.html">Kelas 4</a>
+      <a href="soal_kelas5.html">Kelas 5</a>
+      <a href="soal_kelas6.html">Kelas 6</a>
+      <a href="soal_semua.html">Semua Kelas</a>
+    </nav>
+
+    <a href="index.html" class="kembali">⬅️ Kembali</a>
+  </main>
+</body>
+</html>
