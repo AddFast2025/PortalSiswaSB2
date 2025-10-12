@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buku Digital (PDF) - SD Negeri Sidobandung II</title>
+  <style>
+    body {
+      font-family: system-ui, Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: linear-gradient(160deg, #e0f7fa, #b3e5fc, #81d4fa);
+      text-align: center;
+      color: #0f172a;
+    }
+
+    h1 {
+      font-size: clamp(22px, 5vw, 30px);
+      margin-bottom: 20px;
+      font-weight: 700;
+    }
+
+    iframe {
+      width: 100%;
+      max-width: 800px;
+      height: 600px;
+      border: none;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      background: white;
+    }
+
+    a.kembali {
+      display: inline-block;
+      margin-top: 24px;
+      padding: 12px 24px;
+      background: #0284c7;
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(2, 132, 199, 0.3);
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    a.kembali:hover {
+      background: #0369a1;
+    }
+
+    a.kembali:active {
+      transform: scale(0.97);
+    }
+  </style>
+</head>
+<body>
+  <h1>📘 <br>Dokumen Digital <br>SD Negeri Sidobandung II</h1>
+
+  <iframe 
+    src="https://drive.google.com/file/d/1ufIc5i_1yIS63OjAKUJJcGw7AvH90G79/preview" 
+    allow="autoplay">
+  </iframe>
+
+  <br>
+  <a href="index.html" class="kembali">⬅️ Kembali ke Beranda</a>
+</body>
+</html>
