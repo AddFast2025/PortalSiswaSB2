@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Kelas VI</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, Arial, sans-serif;
+      text-align: center;
+      color: #0f172a;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+      background: linear-gradient(160deg, #e0f7fa, #b3e5fc, #81d4fa);
+    }
+
+    header img {
+      width: 160px;
+      height: 160px;
+      object-fit: contain;
+      margin-bottom: 16px;
+      border-radius: 50%;
+      background: linear-gradient(160deg, #e0f7fa, #b3e5fc, #81d4fa);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    h1 {
+      font-size: clamp(20px, 5vw, 30px);
+      margin: 0 0 10px;
+      font-weight: 500;
+    }
+ p.lead{
+      margin: 0 0 20px;
+      color:#334155;
+      font-size:16px;
+      font-weight:400;
+    }
+
+   .menu {
+  display: flex;
+  flex-direction: column;   /* susun ke bawah */
+  align-items: center;      /* agar rata tengah */
+  gap: 14px;
+  width: 100%;
+  max-width: 320px;         /* semua tombol sama lebar */
+  margin: 0 auto;           /* posisi menu di tengah halaman */
+}
+
+.menu a {
+  display: block;
+  width: 100%;              /* pastikan semua tombol punya lebar sama */
+  text-align: center;
+  padding: 14px;
+  border-radius: 12px;
+  background: #0284c7;
+  color: white;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: 0 6px 16px rgba(2, 132, 199, 0.35);
+  transition: background 0.2s, transform 0.1s;
+}
+
+.menu a:hover {
+  background: #0369a1;
+}
+
+.menu a:active {
+  transform: scale(0.98);
+}
+
+
+    @media (max-width: 400px) {
+      .menu {
+        grid-template-columns: 1fr; /* satu kolom di layar kecil */
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="https://i.imgur.com/RruvYpK.jpeg" alt="Logo Sekolah" width="110" height="110">
+  </header>
+
+  <h1>Selamat Datang Siswa Kelas VI</h1>
+  <p class="lead">Terus belajar dengan penuh semangat</p>
+
+  <nav class="menu" id="menu"></nav>
+
+  <script>
+    // 🔧 PENGATURAN TOMBOL (true = tampil, false = sembunyikan)
+    const menuVisibility = {
+      Tb1: true,
+      Tb2: true,
+      Tb3: true,
+      Tb4: false,
+      Tb5: false,
+      Tb6: false,
+      Tb7: false,
+      Tb8: false,
+      Tb9: false,
+      Tb10: false
+    };
+
+    // 🔗 DAFTAR MENU
+    const menuList = [
+    
+      { key: "Tb1", text: "📖 KISI-KISI", link: "jurnal_literasi.html" },
+      { key: "Tb2", text: "📊 SOAL PAKET 1", link: "lihat_nilai.html" },
+      { key: "Tb3", text: "📚 NILAI", link: "buku_digital.html" },
+      { key: "Tb4", text: "📝 Soal & Latihan", link: "soaldanlatihan.html" },
+      { key: "Tb5", text: "🎬 Media ", link: "pengembangan.html" },
+      { key: "Tb6", text: "🎨 Karyaku", link: "pengembangan.html" },
+      { key: "Tb7", text: "📅 Hafalan", link: "alwaqiah.html" },
+      { key: "Tb8", text: "📢 Pengumuman", link: "pengembangan.html" },
+      { key: "Tb9", text: "💬 Saran & Masukan", link: "saran_masukan.html" },
+  { key: "Tb10", text: "🌅 Lapor Subuh", link: "jurnal.html" }
+    ];
+
+    // 🧩 GENERATE MENU
+    const menuContainer = document.getElementById("menu");
+    menuList.forEach(item => {
+      if (menuVisibility[item.key]) {
+        const a = document.createElement("a");
+        a.href = item.link;
+        a.textContent = item.text;
+        menuContainer.appendChild(a);
+      }
+    });
+  </script>
+</body>
+</html>
