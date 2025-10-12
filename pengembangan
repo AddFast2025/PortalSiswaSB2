@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tahap Pengembangan</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+      background: linear-gradient(160deg, #e0f7fa, #b3e5fc, #81d4fa);
+      color: #0f172a;
+    }
+
+    h1 {
+      font-size: clamp(22px, 5vw, 32px);
+      margin-bottom: 20px;
+    }
+
+    p {
+      font-size: 16px;
+      margin-bottom: 30px;
+      color: #334155;
+    }
+
+    a {
+      display: inline-block;
+      padding: 12px 24px;
+      background: #0284c7;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 10px;
+      font-weight: 600;
+      box-shadow: 0 4px 10px rgba(2, 132, 199, 0.3);
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    a:hover {
+      background: #0369a1;
+    }
+
+    a:active {
+      transform: scale(0.97);
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>⚙️ Maaf, halaman ini masih tahap pengembangan</h1>
+    <p>Silakan kembali ke halaman utama sementara kami menyelesaikan fitur ini.</p>
+    <a href="index.html">⬅️ Kembali</a>
+  </main>
+</body>
+</html>
