@@ -1,0 +1,250 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daftar Nilai Siswa</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 15px;
+      background-color: #f8f9fa;
+    }
+.bismillah {
+      font-family: 'Amiri', serif;
+      font-size: 28px;
+      direction: rtl;
+      color: #2c3e50;
+      margin-bottom: 10px;
+text-align: center;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 2px;
+font-size: 26px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 10px;
+      font-size: 18px;
+    }
+
+    .form-container, .table-container {
+      max-width: 400px;
+      margin: 20px auto;
+      background: #fff;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    select, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      font-weight: bold;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
+    }
+
+    button {
+      background-color: #007bff;
+      color: white;
+      font-weight: bold;
+      margin-top: 15px;
+      cursor: pointer;
+      border: none;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      margin-top: 10px;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+    }
+
+    th {
+      background-color: #009bff;
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    td {
+      font-size: 16px;
+    }
+
+    td:nth-child(1),
+    th:nth-child(1) {
+      width: 40px;           /* kolom No lebih kecil */
+      text-align: center;
+    }
+
+    td:nth-child(2) {
+      text-align: left;      /* kolom Jenis Nilai rata kiri */
+    }
+
+    td:nth-child(3),
+    th:nth-child(3) {
+      text-align: center;    /* kolom Nilai tengah */
+    }
+
+    /* Responsif di HP */
+    @media (max-width: 600px) {
+      body {
+        margin: 10px;
+      }
+
+      .form-container, .table-container {
+        padding: 15px;
+      }
+
+      select, button {
+        font-size: 14px;
+        padding: 8px;
+      }
+
+      th, td {
+        font-size: 13px;
+        padding: 6px;
+      }
+    }
+  </style>
+ <link href="https://fonts.googleapis.com/css2?family=Amiri&display=swap" rel="stylesheet">
+
+</head>
+<body>
+ <div class="bismillah">بِسْمِ ٱللّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</div>
+  <h1>KARTU HAFALAN SISWA</h1>
+  <h2>SDN SIDOBANDUNG II</h2>
+
+  <!-- Blok pilih kelas & nama -->
+  <div class="form-container">
+    <label for="kelas">Pilih Kelas:</label>
+    <select id="kelas">
+      <option value="">-- Pilih Kelas --</option>
+    </select>
+
+    <label for="nama">Pilih Nama:</label>
+    <select id="nama" disabled>
+      <option value="">-- Pilih Nama --</option>
+    </select>
+
+    <button id="btnCari">Cari</button>
+  </div>
+
+  <!-- Blok tabel nilai (sama tampilannya) -->
+  <div class="table-container" id="tableContainer" style="display:none;">
+    <table id="tabelNilai">
+      <thead>
+        <tr>
+          <th>No</th>
+          <th>Jenis Nilai</th>
+          <th>Nilai</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <script>
+    const scriptURL = "https://script.google.com/macros/s/AKfycbxPML0A_LZD1wOZ-eGZ9QPrqeMT3n1vsDXGWCDDmZVjQTj2ic3dQKSLXfnohKyNJ1zWdA/exec";
+
+    async function loadData() {
+      const res = await fetch(scriptURL + "?mode=data");
+      const data = await res.json();
+
+      const kelasSelect = document.getElementById("kelas");
+      const namaSelect = document.getElementById("nama");
+      const tabel = document.getElementById("tabelNilai");
+      const tableContainer = document.getElementById("tableContainer");
+
+      // isi dropdown kelas
+      const kelasSet = [...new Set(data.map(d => d.Kelas))];
+      kelasSet.forEach(k => {
+        const opt = document.createElement("option");
+        opt.value = k;
+        opt.textContent = k;
+        kelasSelect.appendChild(opt);
+      });
+
+      // ketika kelas diubah
+      kelasSelect.addEventListener("change", () => {
+        const selectedKelas = kelasSelect.value;
+        namaSelect.innerHTML = '<option value="">-- Pilih Nama --</option>';
+        namaSelect.disabled = !selectedKelas;
+        tableContainer.style.display = "none";
+
+        if (selectedKelas) {
+          const siswaKelas = data.filter(d => d.Kelas === selectedKelas);
+          siswaKelas.forEach(s => {
+            const opt = document.createElement("option");
+            opt.value = s.Nama;
+            opt.textContent = s.Nama;
+            namaSelect.appendChild(opt);
+          });
+        }
+      });
+
+      // ketika nama diubah → sembunyikan tabel
+      namaSelect.addEventListener("change", () => {
+        tableContainer.style.display = "none";
+      });
+
+      // tombol cari
+      document.getElementById("btnCari").addEventListener("click", () => {
+        const kelas = kelasSelect.value;
+        const nama = namaSelect.value;
+
+        if (!kelas || !nama) {
+          alert("Pilih kelas dan nama terlebih dahulu!");
+          return;
+        }
+
+        const siswa = data.find(d => d.Kelas === kelas && d.Nama === nama);
+        if (!siswa) return alert("Data tidak ditemukan");
+
+        const nilaiKeys = Object.keys(siswa).filter(k => k !== "Kelas" && k !== "Nama");
+        const tbody = tabel.querySelector("tbody");
+        tbody.innerHTML = "";
+
+        nilaiKeys.forEach((key, i) => {
+          const row = `
+            <tr>
+              <td>${i + 1}</td>
+              <td>${key}</td>
+              <td>${siswa[key] || ""}</td>
+            </tr>`;
+          tbody.insertAdjacentHTML("beforeend", row);
+        });
+
+        tableContainer.style.display = "block";
+      });
+    }
+
+    loadData();
+  </script>
+
+</body>
+</html>
