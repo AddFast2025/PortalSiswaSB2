@@ -1,42 +1,73 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Data Nilai Siswa</title>
   <style>
     body { 
-      font-family: Arial, sans-serif; 
-      margin: 40px; 
-      background: #f5f5f5; 
+      font-family: "Segoe UI", Arial, sans-serif; 
+      margin: 10px; 
+      background: #f9f9f9; 
+      color: #222;
+      font-size: 20px; /* ukuran teks dasar lebih besar */
     }
+
     h1 { 
       text-align: center; 
-      color: #333; 
+      color: #2d2d2d; 
+      font-size: 24px; 
+      margin-top: 20px;
     }
+
     table { 
       width: 100%; 
       border-collapse: collapse; 
       margin-top: 20px; 
       background: white; 
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      border-radius: 10px;
+      overflow: hidden;
     }
+
     th, td { 
-      border: 1px solid #ccc; 
-      padding: 10px; 
+      border: 1px solid #ddd; 
+      padding: 12px 8px; 
+      font-size: 20px;
     }
+
     th { 
       background-color: #4CAF50; 
       color: white; 
       text-align: center;
+      font-size:20px;
+      letter-spacing: 0.5px;
     }
+
     td:nth-child(1), td:nth-child(3) {
-      text-align: center; /* No dan Nilai rata tengah */
+      text-align: center; /* No dan Nilai */
     }
+
     td:nth-child(2) {
       text-align: left; /* Nama Siswa rata kiri */
     }
+
     tr:nth-child(even) { 
-      background: #f9f9f9; 
+      background: #f2f2f2; 
+    }
+
+    /* Untuk tampilan HP: ubah ukuran teks sedikit lebih besar */
+    @media (max-width: 600px) {
+      body {
+        font-size: 36px;
+      }
+      th, td {
+        padding: 14px 6px;
+        font-size: 24px;
+      }
+      h1 {
+        font-size: 30px;
+      }
     }
   </style>
 </head>
@@ -55,7 +86,7 @@
   </table>
 
   <script>
-    const url = "https://script.google.com/macros/s/AKfycbxcRsA-ZXVQkEf3Bpdf19W80U5P1tsUa8xtpTO9tJNdkJg1038jbYf35qHbdwXuG0GQ/exec"; // 🔁 Ganti dengan URL Web App kamu
+    const url = "https://script.google.com/macros/s/AKfycbxcRsA-ZXVQkEf3Bpdf19W80U5P1tsUa8xtpTO9tJNdkJg1038jbYf35qHbdwXuG0GQ/exec";
 
     fetch(url)
       .then(res => res.json())
