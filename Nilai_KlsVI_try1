@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Data Nilai Siswa</title>
+  <style>
+    body { 
+      font-family: Arial, sans-serif; 
+      margin: 40px; 
+      background: #f5f5f5; 
+    }
+    h1 { 
+      text-align: center; 
+      color: #333; 
+    }
+    table { 
+      width: 100%; 
+      border-collapse: collapse; 
+      margin-top: 20px; 
+      background: white; 
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    th, td { 
+      border: 1px solid #ccc; 
+      padding: 10px; 
+    }
+    th { 
+      background-color: #4CAF50; 
+      color: white; 
+      text-align: center;
+    }
+    td:nth-child(1), td:nth-child(3) {
+      text-align: center; /* No dan Nilai rata tengah */
+    }
+    td:nth-child(2) {
+      text-align: left; /* Nama Siswa rata kiri */
+    }
+    tr:nth-child(even) { 
+      background: #f9f9f9; 
+    }
+  </style>
+</head>
+<body>
+  <h1 id="judul">Memuat judul...</h1>
+
+  <table>
+    <thead>
+      <tr>
+        <th>No</th>
+        <th>Nama Siswa</th>
+        <th>Nilai</th>
+      </tr>
+    </thead>
+    <tbody id="data"></tbody>
+  </table>
+
+  <script>
+    const url = "https://script.google.com/macros/s/AKfycbxcRsA-ZXVQkEf3Bpdf19W80U5P1tsUa8xtpTO9tJNdkJg1038jbYf35qHbdwXuG0GQ/exec"; // 🔁 Ganti dengan URL Web App kamu
+
+    fetch(url)
+      .then(res => res.json())
+      .then(json => {
+        document.getElementById("judul").textContent = json.title;
+
+        const tbody = document.getElementById("data");
+        json.data.forEach(item => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${item.no}</td>
+            <td>${item.nama}</td>
+            <td>${item.nilai}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      })
+      .catch(err => {
+        document.getElementById("judul").textContent = "Gagal memuat data";
+        console.error(err);
+      });
+  </script>
+</body>
+</html>
