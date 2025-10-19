@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kotak Saran & Masukan</title>
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background: #dfe6e9;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: #0984e3;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      font-size: 20px;
+      font-weight: 600;
+    }
+    .container {
+      max-width: 400px;
+      margin: 20px auto;
+      background: white;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    }
+    label {
+      display: block;
+      font-weight: 600;
+      margin-top: 10px;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 8px;
+      border: 1px solid #b2bec3;
+      box-sizing: border-box;
+      font-size: 14px;
+    }
+    button {
+      margin-top: 15px;
+      width: 100%;
+      padding: 10px;
+      background: #0984e3;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover { background: #74b9ff; }
+    .success { text-align: center; color: green; margin-top: 10px; display: none; }
+    h3 { margin-top: 30px; border-bottom: 2px solid #0984e3; padding-bottom: 5px; color: #2d3436; }
+    .saran-card {
+      background: #f5f6fa;
+      border-radius: 10px;
+      padding: 10px 15px;
+      margin-bottom: 10px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    }
+    .saran-header {
+      font-weight: bold;
+      color: #0984e3;
+    }
+    .tanggapan {
+      background: #dfe6e9;
+      border-left: 4px solid #00b894;
+      padding: 5px 10px;
+      margin-top: 8px;
+      border-radius: 5px;
+      font-style: italic;
+      color: #2d3436;
+    }
+  </style>
+</head>
+<body>
+  <header>💬 Kotak Saran & Masukan</header>
+
+  <div class="container">
+    <label>Nama (opsional):</label>
+    <input type="text" id="nama">
+
+    <label>Kategori:</label>
+    <select id="kategori">
+      <option value="Saran">Saran</option>
+      <option value="Kritik">Kritik</option>
+      <option value="Masukan Umum">Masukan Umum</option>
+    </select>
+
+    <label>Isi Pesan:</label>
+    <textarea id="pesan" rows="4" placeholder="Tulis saran Anda di sini..."></textarea>
+
+    <button onclick="kirimData()">Kirim</button>
+    <p id="notif" class="success">Saran berhasil dikirim!</p>
+
+    <h3>📋 Semua Saran & Tanggapan</h3>
+    <div id="daftar-saran"></div>
+  </div>
+
+  <script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbxxxxx/exec";
+
+    async function kirimData() {
+      const nama = document.getElementById("nama").value;
+      const kategori = document.getElementById("kategori").value;
+      const pesan = document.getElementById("pesan").value;
+      const notif = document.getElementById("notif");
+
+      if (!pesan.trim()) return alert("Silakan isi pesan terlebih dahulu!");
+
+      const res = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nama, kategori, pesan })
+      });
+
+      const result = await res.json();
+      if (result.status === "success") {
+        notif.style.display = "block";
+        document.getElementById("pesan").value = "";
+        loadSaran();
+      }
+    }
+
+    async function loadSaran() {
+      const res = await fetch(API_URL + "?mode=list");
+      const data = await res.json();
+      const daftar = document.getElementById("daftar-saran");
+      daftar.innerHTML = "";
+
+      data.reverse().forEach(item => {
+        const card = document.createElement("div");
+        card.className = "saran-card";
+        card.innerHTML = `
+          <div class="saran-header">${item.nama} - <small>${item.kategori}</small></div>
+          <div>${item.pesan}</div>
+          <div class="tanggapan">
+            <b>Tanggapan:</b> ${item.tanggapan ? item.tanggapan : "<i>Belum ada tanggapan</i>"}
+          </div>
+        `;
+        daftar.appendChild(card);
+      });
+    }
+
+    // Load data saat pertama kali dibuka
+    loadSaran();
+  </script>
+</body>
+</html>
