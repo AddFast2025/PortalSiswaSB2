@@ -6,41 +6,47 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      margin: 30px;
+      margin: 15px;
       background-color: #f8f9fa;
     }
+
     h1 {
       text-align: center;
-      margin-bottom: 1px;
-    }
- h2 {
-      text-align: center;
-      margin-bottom: 10px;
-font-size:20px;
+      margin-bottom: 2px;
     }
 
-    .form-container {
-      max-width: 400px;
-      margin: 0 auto;
+    h2 {
+      text-align: center;
+      margin-bottom: 10px;
+      font-size: 18px;
+    }
+
+    .form-container, .table-container {
+      max-width: 500px;
+      margin: 20px auto;
       background: #fff;
       padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      border-radius: 12px;
+      box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
     }
+
     label {
       display: block;
       margin-top: 10px;
       font-weight: bold;
     }
+
     select, button {
       width: 100%;
-      padding: 8px;
+      padding: 10px;
       margin-top: 5px;
       font-weight: bold;
-      font-size:14px;
+      font-size: 16px;
       border: 1px solid #ccc;
-      border-radius: 5px;
+      border-radius: 6px;
+      box-sizing: border-box;
     }
+
     button {
       background-color: #007bff;
       color: white;
@@ -48,56 +54,80 @@ font-size:20px;
       margin-top: 15px;
       cursor: pointer;
       border: none;
+      transition: background 0.3s ease;
     }
+
     button:hover {
       background-color: #0056b3;
     }
+
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 20px;
+      background: #fff;
+      margin-top: 10px;
     }
-th {
-  font-size: 18px;
-  font-weight: bold;
-}
-td {
-  font-size: 16px;
-}
 
     th, td {
       border: 1px solid #ccc;
       padding: 8px;
-	
     }
+
     th {
       background-color: #009bff;
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+      text-align: center;
     }
+
+    td {
+      font-size: 16px;
+    }
+
     td:nth-child(1),
     th:nth-child(1) {
-      width: 50px;
+      width: 40px;           /* kolom No lebih kecil */
       text-align: center;
     }
-    th:nth-child(2)
-    {
-      text-align: center;
-    }
- 
+
     td:nth-child(2) {
-      text-align: left;
+      text-align: left;      /* kolom Jenis Nilai rata kiri */
     }
 
     td:nth-child(3),
     th:nth-child(3) {
-      text-align: center;
+      text-align: center;    /* kolom Nilai tengah */
+    }
+
+    /* Responsif di HP */
+    @media (max-width: 600px) {
+      body {
+        margin: 10px;
+      }
+
+      .form-container, .table-container {
+        padding: 15px;
+      }
+
+      select, button {
+        font-size: 14px;
+        padding: 8px;
+      }
+
+      th, td {
+        font-size: 13px;
+        padding: 6px;
+      }
     }
   </style>
 </head>
 <body>
 
   <h1>Daftar Nilai Siswa</h1>
- <h2>SDN SIDOBANDUNG II</h2>
+  <h2>SDN SIDOBANDUNG II</h2>
 
+  <!-- Blok pilih kelas & nama -->
   <div class="form-container">
     <label for="kelas">Pilih Kelas:</label>
     <select id="kelas">
@@ -112,16 +142,19 @@ td {
     <button id="btnCari">Cari</button>
   </div>
 
-  <table id="tabelNilai" style="display:none;">
-    <thead>
-      <tr>
-        <th>No</th>
-        <th>Jenis Nilai</th>
-        <th>Nilai</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+  <!-- Blok tabel nilai (sama tampilannya) -->
+  <div class="table-container" id="tableContainer" style="display:none;">
+    <table id="tabelNilai">
+      <thead>
+        <tr>
+          <th>No</th>
+          <th>Jenis Nilai</th>
+          <th>Nilai</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
 
   <script>
     const scriptURL = "https://script.google.com/macros/s/AKfycbzMDhK_-jzGmQZ18GnJzJc9AIJrmiUapJSMRuShoWU1TpotA1bQy7XKgOiNPFIToetd/exec";
@@ -133,6 +166,7 @@ td {
       const kelasSelect = document.getElementById("kelas");
       const namaSelect = document.getElementById("nama");
       const tabel = document.getElementById("tabelNilai");
+      const tableContainer = document.getElementById("tableContainer");
 
       // isi dropdown kelas
       const kelasSet = [...new Set(data.map(d => d.Kelas))];
@@ -148,10 +182,9 @@ td {
         const selectedKelas = kelasSelect.value;
         namaSelect.innerHTML = '<option value="">-- Pilih Nama --</option>';
         namaSelect.disabled = !selectedKelas;
-        tabel.style.display = "none"; // sembunyikan tabel
+        tableContainer.style.display = "none";
 
         if (selectedKelas) {
-
           const siswaKelas = data.filter(d => d.Kelas === selectedKelas);
           siswaKelas.forEach(s => {
             const opt = document.createElement("option");
@@ -164,7 +197,7 @@ td {
 
       // ketika nama diubah → sembunyikan tabel
       namaSelect.addEventListener("change", () => {
-        tabel.style.display = "none";
+        tableContainer.style.display = "none";
       });
 
       // tombol cari
@@ -179,19 +212,22 @@ td {
 
         const siswa = data.find(d => d.Kelas === kelas && d.Nama === nama);
         if (!siswa) return alert("Data tidak ditemukan");
-const nilaiKeys = Object.keys(siswa).filter(k => k !== "Kelas" && k !== "Nama");
 
-                const tbody = tabel.querySelector("tbody");
+        const nilaiKeys = Object.keys(siswa).filter(k => k !== "Kelas" && k !== "Nama");
+        const tbody = tabel.querySelector("tbody");
         tbody.innerHTML = "";
+
         nilaiKeys.forEach((key, i) => {
-          const row = `<tr>
-            <td>${i + 1}</td>
-            <td>${key}</td>
-            <td>${siswa[key] || ""}</td>
-          </tr>`;
+          const row = `
+            <tr>
+              <td>${i + 1}</td>
+              <td>${key}</td>
+              <td>${siswa[key] || ""}</td>
+            </tr>`;
           tbody.insertAdjacentHTML("beforeend", row);
         });
-        tabel.style.display = "table";
+
+        tableContainer.style.display = "block";
       });
     }
 
