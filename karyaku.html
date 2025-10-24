@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Karyaku - SD Negeri Sidobandung II</title>
+  <style>
+header img {
+      width: 160px;
+      height: 160px;
+      object-fit: contain;
+      margin-bottom: 6px;
+      border-radius: 50%;
+      background: linear-gradient(160deg, #e0f7fa, #b3e5fc, #81d4fa);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    :root{--maxw:960px;--gap:18px;--card-bg:#ffffff;--accent:#0b5ed7}
+    *{box-sizing:border-box}
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial; background:#f4f6fb; margin:0; color:#222}
+    .container{max-width:var(--maxw);margin:36px auto;padding:20px}
+    header{text-align:center;margin-bottom:24px}
+    h1{font-size:1.45rem;margin:0}
+    h2{font-size:1rem;margin:6px 0 0;color:#444;font-weight:500}
+
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:var(--gap);align-items:start}
+    .card{background:var(--card-bg);border-radius:10px;box-shadow:0 6px 18px rgba(20,30,50,0.06);overflow:hidden;text-align:center;transition:transform .2s}
+    .card:hover{transform:translateY(-3px)}
+    .thumb{width:100%;height:100px;overflow:hidden}
+    .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+    .meta{padding:12px 14px 18px}
+    .book-title{margin:0;font-size:0.98rem;font-weight:600;color:#111}
+    .book-sub{margin:6px 0 0;font-size:0.86rem;color:#666}
+    .small-note{margin-top:14px;text-align:center;font-size:0.85rem;color:#555}
+  </style>
+</head>
+<body>
+<div class="container">
+<header>
+  <img 
+    src="https://i.imgur.com/RruvYpK.jpeg" 
+    alt="Logo Sekolah" 
+    width="110" 
+    height="150"
+  >
+</header>
+
+  
+    <header>
+      <h1>Coding Karyaku</h1>
+      <h2>SD Negeri Sidobandung II</h2>
+    </header>
+
+    <!-- Grid tempat buku akan dimasukkan otomatis -->
+    <section class="grid" id="bookGrid"></section>
+
+    <div class="small-note">Klik gambar untuk membuka file PDF (Google Drive) di tab baru.</div>
+  </div>
+
+  <script>
+    /* ===============================
+       🔧 DAFTAR BUKU — EDIT DI SINI SAJA
+       =============================== */
+    const books = [
+    {
+        judul: "Penjumlahan_1",
+        pengarang: "Muhammad Nurzakun",
+        gambar: "gbKarya/gb1.jpg",
+        link: "penjumlahan_1.html"
+      },
+		{
+        judul: "Pengurangan_1",
+        pengarang: "Muhammad Nurzakun",
+        gambar: "gbKarya/gb2.jpg",
+        link: "pengurangan_1.html"
+      },
+      {
+        judul: "Ayo Makan Buah!!",
+        pengarang: "Muhammad Nurzakun",
+        gambar: "gbKarya/gb3.jpg",
+        link: "makan_buah.html"
+      },
+	{
+        judul: "Melesatttt",
+        pengarang: "Muhammad Nurzakun",
+        gambar: "gbKarya/gb4.jpg",
+        link: "melesat.html"
+      }
+      
+      
+
+
+    ];
+
+    /* ===============================
+       🧩 PENAMPILAN OTOMATIS KE GRID
+       =============================== */
+    const grid = document.getElementById('bookGrid');
+    books.forEach(b => {
+      grid.innerHTML += `
+        <article class="card">
+          <a class="thumb" href="${b.link}" target="_blank" rel="noopener noreferrer" title="Buka PDF ${b.judul}">
+            <img src="${b.gambar}" alt="Sampul ${b.judul}">
+          </a>
+          <div class="meta">
+            <p class="book-title">${b.judul}</p>
+            <p class="book-sub">${b.pengarang}</p>
+          </div>
+        </article>
+      `;
+    });
+  </script>
+</body>
+</html>
