@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Koleksi Video YouTube</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #f7f9fc;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #0b1730;
+      margin-bottom: 10px;
+    }
+h2 {
+      text-align: center;
+      color: #0b1730;
+ font-size: 0.95rem;
+      margin-bottom: 20px;
+    }
+
+    .video-list {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr); /* dua kolom */
+      gap: 16px;
+      justify-items: center;
+    }
+    .video-card {
+      width: 100%;
+      max-width: 200px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      overflow: hidden;
+      transition: transform 0.2s;
+    }
+    .video-card:hover {
+      transform: scale(1.02);
+    }
+    .video-card img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .video-info {
+      padding: 8px 10px;
+      text-align: center;
+    }
+    .video-info h3 {
+      margin: 0;
+      font-size: 0.95rem;
+      color: #0b1730;
+    }
+    .video-info a {
+      text-decoration: none;
+      color: #0b5ed7;
+    }
+
+    /* Responsif untuk HP kecil */
+    @media (max-width: 400px) {
+      .video-list {
+        grid-template-columns: 1fr; /* satu kolom di layar kecil */
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Media Pembelajaran</h1>
+  <h2>SDN SIDOBANDUNG II</h2>
+
+  <div class="video-list" id="videoList">
+
+    <div class="video-card">
+      <a href="https://youtu.be/nlXwuNHF8JM" target="_blank">
+        <img src="https://img.youtube.com/vi/nlXwuNHF8JM/hqdefault.jpg" alt="Thumbnail Video 1">
+      </a>
+      <div class="video-info">
+        <h3><a href="https://www.youtube.com/watch?v=nlXwuNHF8JM" target="_blank">Fotosintesis</a></h3>
+      </div>
+    </div>
+
+    <div class="video-card">
+      <a href="https://www.youtube.com/watch?v=g9LvjUavRMg" target="_blank">
+        <img src="https://img.youtube.com/vi/g9LvjUavRMg/hqdefault.jpg" alt="Thumbnail Video 2">
+      </a>
+      <div class="video-info">
+        <h3><a href="https://www.youtube.com/watch?v=g9LvjUavRMg" target="_blank">Pencernaan</a></h3>
+      </div>
+    </div>
+
+    <div class="video-card">
+      <a href="https://www.youtube.com/watch?v=I5E4Z8TEIy4" target="_blank">
+        <img src="https://img.youtube.com/vi/I5E4Z8TEIy4/hqdefault.jpg" alt="Thumbnail Video 3">
+      </a>
+      <div class="video-info">
+        <h3><a href="https://www.youtube.com/watch?v=I5E4Z8TEIy4" target="_blank">Organ Tubuh</a></h3>
+      </div>
+    </div>
+
+    <div class="video-card">
+      <a href="https://www.youtube.com/watch?v=E6OtLfszaVI" target="_blank">
+        <img src="https://img.youtube.com/vi/E6OtLfszaVI/hqdefault.jpg" alt="Thumbnail Video 4">
+      </a>
+      <div class="video-info">
+        <h3><a href="https://www.youtube.com/watch?v=E6OtLfszaVI" target="_blank">Gerhana</a></h3>
+      </div>
+    </div>
+
+    <div class="video-card">
+      <a href="https://www.youtube.com/watch?v=CqkQv617bcw" target="_blank">
+        <img src="https://img.youtube.com/vi/CqkQv617bcw/hqdefault.jpg" alt="Thumbnail Video 5">
+      </a>
+      <div class="video-info">
+        <h3><a href="https://www.youtube.com/watch?v=CqkQv617bcw" target="_blank">Rotasi dan Revolusi Bumi</a></h3>
+      </div>
+    </div>
+
+    <div class="video-card">
+      <a href="https://www.youtube.com/watch?v=mOKmjYwfDGU" target="_blank">
+        <img src="https://img.youtube.com/vi/mOKmjYwfDGU/hqdefault.jpg" alt="Thumbnail Video 6">
+      </a>
+      <div class="video-info">
+        <h3><a href="https://www.youtube.com/watch?v=mOKmjYwfDGU" target="_blank">Sistem Pernafasan</a></h3>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>
