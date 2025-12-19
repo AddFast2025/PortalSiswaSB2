@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Home - SDN Sidobandung II</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, Arial, sans-serif;
+      text-align: center;
+      color: #0f172a;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+      background: linear-gradient(160deg, #ffe0b2, #ffb74d, #ff9800);
+    }
+
+    header img {
+      width: 160px;
+      height: 160px;
+      object-fit: contain;
+      margin-bottom: 16px;
+      border-radius: 50%;
+      background: linear-gradient(160deg, #d50000, #ff5252, #ffffff);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    h1 {
+      font-size: clamp(20px, 5vw, 30px);
+      margin: 0 0 28px;
+      font-weight: 700;
+    }
+
+    .menu {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 14px;
+      width: 100%;
+      max-width: 360px;
+    }
+
+    .menu a {
+      display: block;
+      padding: 14px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 15px;
+      color: white;
+      background: #0284c7;
+      box-shadow: 0 6px 16px rgba(2, 132, 199, 0.35);
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .menu a:hover {
+      background: #0369a1;
+    }
+
+    .menu a:active {
+      transform: scale(0.98);
+    }
+
+    @media (max-width: 400px) {
+      .menu {
+        grid-template-columns: 1fr; /* satu kolom di layar kecil */
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="https://i.imgur.com/RruvYpK.jpeg" alt="Logo Sekolah" width="110" height="110">
+  </header>
+
+  <h1>Portal Siswa SDN Sidobandung II</h1>
+
+  <nav class="menu" id="menu"></nav>
+
+  <script>
+    // 🔧 PENGATURAN TOMBOL (true = tampil, false = sembunyikan)
+    const menuVisibility = {
+      laporSubuh: true,
+      jurnalLiterasi: true,
+      lihatNilai: true,
+      bukuDigital: true,
+      soalLatihan: true,
+      mediaPembelajaran: true,
+      karyaku: true,
+      Hafalan: true,
+      pengumuman: true,
+      saranMasukan: true,
+      alwaqiah: true
+    };
+
+    // 🔗 DAFTAR MENU
+    const menuList = [
+   
+      { key: "jurnalLiterasi", text: "📖 Absen Siswa", link: "scan_absen_bimbel.html" },
+      { key: "lihatNilai", text: "📊 Kasih Reward", link: "scan_reward.html" },
+      
+    ];
+
+    // 🧩 GENERATE MENU
+    const menuContainer = document.getElementById("menu");
+    menuList.forEach(item => {
+      if (menuVisibility[item.key]) {
+        const a = document.createElement("a");
+        a.href = item.link;
+        a.textContent = item.text;
+        menuContainer.appendChild(a);
+      }
+    });
+  </script>
+</body>
+</html>
