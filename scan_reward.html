@@ -2,124 +2,100 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>Reward Kegiatan – Scan Kamera</title>
+<title>Absen & Reward Kegiatan</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <script src="https://unpkg.com/html5-qrcode"></script>
 
 <style>
-body {
-  font-family: Arial;
-  background:#f4f6f8;
-  padding:20px;
-}
-
-.card {
-  max-width:1000px;
-  margin:auto;
-  background:#fff;
-  padding:20px;
-  border-radius:10px;
-}
+body { font-family: Arial; background:#f4f6f8; padding:20px; }
+.card { max-width:1100px; margin:auto; background:#fff; padding:20px; border-radius:10px; }
 
 button {
-  width:100%;
-  padding:12px;
-  margin-top:8px;
-  border:none;
-  border-radius:8px;
-  font-size:16px;
-  cursor:pointer;
+  width:100%; padding:12px; margin-top:8px;
+  border:none; border-radius:8px; font-size:16px; cursor:pointer;
 }
-
 .btn-on  { background:#2e7d32; color:#fff; }
 .btn-off { background:#c62828; color:#fff; }
 
-#scannerWrap {
-  position:relative;
-  width:100%;
-  max-width:350px;
-  margin:15px auto;
-}
-
-/* AREA KAMERA */
-#reader {
-  width:100%;
-}
-
-/* OVERLAY PUTIH */
+#scannerWrap { max-width:360px; margin:15px auto; position:relative; }
+#reader { width:100%; }
 #scanOverlay {
-  position:absolute;
-  inset:0;
-  background:white;
-  opacity:0;
-  pointer-events:none;
-  transition:opacity 0.15s ease;
-  border-radius:10px;
+  position:absolute; inset:0; background:#fff;
+  opacity:0; pointer-events:none;
 }
+#scanOverlay.active { opacity:1; }
 
-#scanOverlay.active {
-  opacity:1;
+/* POPUP */
+#popup {
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.5);
+  z-index:999;
+}
+#popupBox {
+  background:#fff;
+  max-width:360px;
+  margin:25vh auto;
+  padding:20px;
+  border-radius:10px;
+  text-align:center;
 }
 
 .notice {
   display:none;
   padding:10px;
-  margin-top:10px;
   border-radius:6px;
+  margin-top:10px;
+  background:#e8f5e9;
+  color:#2e7d32;
 }
-.ok  { background:#e8f5e9; color:#2e7d32; }
-.err { background:#ffebee; color:#c62828; }
 
-table {
-  width:100%;
-  border-collapse:collapse;
-  margin-top:15px;
-}
-th, td {
-  border:1px solid #ddd;
-  padding:8px;
-  text-align:center;
-}
+table { width:100%; border-collapse:collapse; margin-top:15px; }
+th,td { border:1px solid #ddd; padding:8px; text-align:center; }
 th { background:#f1f5f9; }
-.hadir { background:#e8f5e9; }
-.belum { background:#ffebee; }
 </style>
 </head>
 
 <body>
 
 <div class="card">
-  <h3>Reward Kegiatan (Scan Kamera)</h3>
-  <b>SDN SIDOBANDUNG II</b><br>
-  Bimbel Bahasa Inggris Desa Sidobandung
+<h3>📸 Reward Siswa (Scan)</h3>
 
-  <!-- AREA SCAN -->
-  <div id="scannerWrap">
-    <div id="reader"></div>
-    <div id="scanOverlay"></div>
+<div id="scannerWrap">
+  <div id="reader"></div>
+  <div id="scanOverlay"></div>
+</div>
+
+<button class="btn-on" onclick="startCamera()">▶️ ON Kamera</button>
+<button class="btn-off" onclick="stopCamera()">⏹ OFF Kamera</button>
+
+<div id="msgReward" class="notice">⭐ 1 poin berhasil ditambahkan</div>
+
+<hr>
+
+<h3>🏆 Ranking</h3>
+<table>
+<thead>
+<tr>
+  <th>Rank</th>
+  <th>Nama</th>
+  <th>Total Point</th>
+  <th>Badge</th>
+</tr>
+</thead>
+<tbody id="rekap"></tbody>
+</table>
+</div>
+
+<!-- POPUP -->
+<div id="popup">
+  <div id="popupBox">
+    <b id="popupText"></b>
+    <button class="btn-on" onclick="kirimReward()">Iya, Kirim</button>
+    <button class="btn-off" onclick="batalReward()">Batal</button>
   </div>
-
-  <button class="btn-on" onclick="startCamera()">▶️ ON Kamera</button>
-  <button class="btn-off" onclick="stopCamera()">⏹ OFF Kamera</button>
-
-  <div id="msgOk" class="notice ok">✅ Kehadiran berhasil</div>
-  <div id="msgErr" class="notice err">❌ Sudah absen hari ini</div>
-
-  <hr>
-
-  <h3>Rekap Kehadiran</h3>
-  <table>
-    <thead>
-      <tr>
-        <th>Rank</th>
-        <th>Nama</th>
-        <th>Status</th>
-        <th>Total Point</th>
-      </tr>
-    </thead>
-    <tbody id="rekap"></tbody>
-  </table>
 </div>
 
 <script type="module">
@@ -129,155 +105,139 @@ import {
   query, where, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-/* ================= FIREBASE ================= */
+/* FIREBASE */
 const firebaseConfig = {
   apiKey: "AIzaSyD8SIXXPm_c-TJiaRjHbrishFtU2NICm9M",
   authDomain: "datasiswa-c10f4.firebaseapp.com",
-  projectId: "datasiswa-c10f4",
-  storageBucket: "datasiswa-c10f4.appspot.com",
-  messagingSenderId: "872522639660",
-  appId: "1:872522639660:web:10404f15f0f7529469a489"
+  projectId: "datasiswa-c10f4"
 };
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-/* ================= KONFIG ================= */
+/* KONFIG */
 const lembagaId  = "kVMG9kghdBegwrtjxbuX";
 const kegiatanId = "s5ryUqy4yk9DAHgVCfDw";
-const tanggalHariIni = new Date().toLocaleDateString("en-CA");
+const today = new Date().toLocaleDateString("en-CA");
 
-/* ================= PESERTA ================= */
+/* PESERTA */
 const pesertaMap = {};
+let kandidatReward = null;
 
-async function loadPeserta(){
-  const snap = await getDocs(query(
-    collection(db,"peserta_kegiatan"),
-    where("lembagaId","==",lembagaId),
-    where("kegiatanId","==",kegiatanId)
-  ));
+const popup = document.getElementById("popup");
+const popupText = document.getElementById("popupText");
+const scanOverlay = document.getElementById("scanOverlay");
+const msgReward = document.getElementById("msgReward");
+const rekap = document.getElementById("rekap");
 
-  snap.forEach(d=>{
-    const nama = d.data().namaPeserta.split(":").pop().trim().toUpperCase();
-    pesertaMap[nama] = { id:d.id, nama };
-  });
-}
-loadPeserta();
+/* LOAD PESERTA */
+const pSnap = await getDocs(query(
+  collection(db,"peserta_kegiatan"),
+  where("kegiatanId","==",kegiatanId)
+));
+pSnap.forEach(d=>{
+  const nama = d.data().namaPeserta.split(":").pop().trim().toUpperCase();
+  pesertaMap[nama] = { id:d.id, nama };
+});
 
-/* ================= KAMERA ================= */
-let scanner = null;
-let kameraAktif = false;
+/* KAMERA */
+let scanner, aktif=false;
 
-window.startCamera = async function(){
-  if(kameraAktif) return;
-
+window.startCamera = async ()=>{
+  if(aktif) return;
   scanner = new Html5Qrcode("reader");
-  kameraAktif = true;
+  aktif=true;
 
-  await scanner.start(
-    { facingMode:"environment" },
-    { fps:10, qrbox:250 },
-    async (text) => {
-      if(!text.includes(":")) return;
-
+  await scanner.start({facingMode:"environment"},{fps:10,qrbox:250},
+    text=>{
       const nama = text.split(":").pop().trim().toUpperCase();
       if(!pesertaMap[nama]) return;
 
-      await kirimAbsen(pesertaMap[nama]);
+      kandidatReward = pesertaMap[nama];
+      popupText.innerText =
+        `Beri 1 poin untuk ${kandidatReward.nama}?`;
 
-      /* ⏸ PAUSE + OVERLAY PUTIH */
-      scanner.pause();
+      popup.style.display="block";
       scanOverlay.classList.add("active");
-
-      setTimeout(() => {
-        scanOverlay.classList.remove("active");
-        scanner.resume();
-      }, 1500);
+      scanner.pause();
     }
   );
 };
 
-window.stopCamera = async function(){
-  if(scanner && kameraAktif){
-    await scanner.stop();
-    await scanner.clear();
-    kameraAktif = false;
-  }
+window.stopCamera = async ()=>{
+  if(scanner){ await scanner.stop(); await scanner.clear(); aktif=false; }
 };
 
-/* ================= ABSEN ================= */
-async function kirimAbsen(p){
-  const cek = await getDocs(query(
-    collection(db,"absen_kegiatan"),
-    where("pesertaId","==",p.id),
-    where("kegiatanId","==",kegiatanId),
-    where("tanggal","==",tanggalHariIni)
-  ));
-
-  if(!cek.empty){
-    msgErr.style.display="block";
-    msgOk.style.display="none";
-    return;
-  }
-
-  await addDoc(collection(db,"absen_kegiatan"),{
-    lembagaId,
-    kegiatanId,
-    pesertaId:p.id,
-    nama:p.nama,
-    tanggal:tanggalHariIni,
-    point:5,
+/* REWARD */
+window.kirimReward = async ()=>{
+  await addDoc(collection(db,"point_reward"),{
+    lembagaId, kegiatanId,
+    pesertaId:kandidatReward.id,
+    nama:kandidatReward.nama,
+    tanggal:today,
+    point:1,
     dibuat:serverTimestamp()
   });
 
-  msgOk.style.display="block";
-  msgErr.style.display="none";
+  popup.style.display="none";
+  msgReward.style.display="block";
+
+  setTimeout(()=>{
+    msgReward.style.display="none";
+    scanOverlay.classList.remove("active");
+    scanner.resume();
+  },1000);
+
+  kandidatReward=null;
   loadRekap();
+};
+
+window.batalReward = ()=>{
+  kandidatReward=null;
+  popup.style.display="none";
+  scanOverlay.classList.remove("active");
+  scanner.resume();
+};
+
+/* BADGE */
+function badge(p){
+  if(p>=25) return "🏆";
+  if(p>=15) return "🥇";
+  if(p>=10) return "🥈";
+  if(p>=5) return "🥉";
+  return "⭐";
 }
 
-/* ================= REKAP ================= */
+/* REKAP */
 async function loadRekap(){
-  const pesertaSnap = await getDocs(query(
+  const map={};
+
+  const ps = await getDocs(query(
     collection(db,"peserta_kegiatan"),
-    where("lembagaId","==",lembagaId),
     where("kegiatanId","==",kegiatanId)
   ));
-
-  const map = {};
-  pesertaSnap.forEach(d=>{
-    map[d.id] = {
-      nama: d.data().namaPeserta.split(":").pop(),
-      hadir:false,
-      point:0
-    };
+  ps.forEach(d=>{
+    map[d.id]={nama:d.data().namaPeserta.split(":").pop(), point:0};
   });
 
-  const absenSnap = await getDocs(query(
-    collection(db,"absen_kegiatan"),
+  const rs = await getDocs(query(
+    collection(db,"point_reward"),
     where("kegiatanId","==",kegiatanId)
   ));
-
-  absenSnap.forEach(d=>{
-    const r = d.data();
-    if(!map[r.pesertaId]) return;
-
-    if(r.tanggal === tanggalHariIni){
-      map[r.pesertaId].hadir = true;
-      map[r.pesertaId].point += r.point;
-    }
+  rs.forEach(d=>{
+    const r=d.data();
+    if(map[r.pesertaId]) map[r.pesertaId].point+=r.point;
   });
 
-  const data = Object.values(map).sort((a,b)=>b.point-a.point);
-
+  const data=Object.values(map).sort((a,b)=>b.point-a.point);
   rekap.innerHTML="";
   data.forEach((r,i)=>{
-    rekap.innerHTML += `
-      <tr class="${r.hadir ? "hadir":"belum"}">
+    rekap.innerHTML+=`
+      <tr>
         <td>${i+1}</td>
         <td>${r.nama}</td>
-        <td>${r.hadir ? "Hadir":"Belum"}</td>
         <td>${r.point}</td>
-      </tr>
-    `;
+        <td>${badge(r.point)}</td>
+      </tr>`;
   });
 }
 loadRekap();
