@@ -2,26 +2,20 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>Absen Kegiatan – Scan Kamera</title>
+<title>Absen Kegiatan – Scan QR</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <script src="https://unpkg.com/html5-qrcode"></script>
 
 <style>
-body {
-  font-family: Arial;
-  background:#f4f6f8;
-  padding:20px;
-}
-
+body { font-family:Arial; background:#f4f6f8; padding:20px; }
 .card {
   max-width:1000px;
   margin:auto;
   background:#fff;
   padding:20px;
-  border-radius:10px;
+  border-radius:12px;
 }
-
 button {
   width:100%;
   padding:12px;
@@ -31,36 +25,25 @@ button {
   font-size:16px;
   cursor:pointer;
 }
-
-.btn-on  { background:#2e7d32; color:#fff; }
-.btn-off { background:#c62828; color:#fff; }
+.btn-on  { background:#2e7d32; color:white; }
+.btn-off { background:#c62828; color:white; }
 
 #scannerWrap {
   position:relative;
-  width:100%;
-  max-width:350px;
+  max-width:360px;
   margin:15px auto;
 }
+#reader { width:100%; }
 
-/* AREA KAMERA */
-#reader {
-  width:100%;
-}
-
-/* OVERLAY PUTIH */
 #scanOverlay {
   position:absolute;
   inset:0;
   background:white;
   opacity:0;
   pointer-events:none;
-  transition:opacity 0.15s ease;
-  border-radius:10px;
+  transition:opacity 0.15s;
 }
-
-#scanOverlay.active {
-  opacity:1;
-}
+#scanOverlay.active { opacity:1; }
 
 .notice {
   display:none;
@@ -76,7 +59,7 @@ table {
   border-collapse:collapse;
   margin-top:15px;
 }
-th, td {
+th,td {
   border:1px solid #ddd;
   padding:8px;
   text-align:center;
@@ -90,11 +73,10 @@ th { background:#f1f5f9; }
 <body>
 
 <div class="card">
-  <h3>Absen Kegiatan (Scan Kamera)</h3>
+  <h3>Absen Kegiatan (Scan QR)</h3>
   <b>SDN SIDOBANDUNG II</b><br>
   Bimbel Bahasa Inggris Desa Sidobandung
 
-  <!-- AREA SCAN -->
   <div id="scannerWrap">
     <div id="reader"></div>
     <div id="scanOverlay"></div>
@@ -104,18 +86,18 @@ th { background:#f1f5f9; }
   <button class="btn-off" onclick="stopCamera()">⏹ OFF Kamera</button>
 
   <div id="msgOk" class="notice ok">✅ Kehadiran berhasil</div>
-  <div id="msgErr" class="notice err">❌ Sudah absen hari ini</div>
+  <div id="msgErr" class="notice err">❌ Sudah absen / gagal</div>
 
   <hr>
 
-  <h3>Rekap Kehadiran</h3>
+  <h3>Rekap Kehadiran Hari Ini</h3>
   <table>
     <thead>
       <tr>
         <th>Rank</th>
         <th>Nama</th>
         <th>Status</th>
-        <th>Total Point</th>
+        <th>Point</th>
       </tr>
     </thead>
     <tbody id="rekap"></tbody>
@@ -123,20 +105,20 @@ th { background:#f1f5f9; }
 </div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { initializeApp } from
+"https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+
 import {
-  getFirestore, collection, getDocs, addDoc,
-  query, where, serverTimestamp
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+  getFirestore, collection, getDocs,
+  query, where, doc, setDoc, serverTimestamp
+} from
+"https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 /* ================= FIREBASE ================= */
 const firebaseConfig = {
   apiKey: "AIzaSyD8SIXXPm_c-TJiaRjHbrishFtU2NICm9M",
   authDomain: "datasiswa-c10f4.firebaseapp.com",
-  projectId: "datasiswa-c10f4",
-  storageBucket: "datasiswa-c10f4.appspot.com",
-  messagingSenderId: "872522639660",
-  appId: "1:872522639660:web:10404f15f0f7529469a489"
+  projectId: "datasiswa-c10f4"
 };
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
@@ -145,6 +127,24 @@ const db = getFirestore(app);
 const lembagaId  = "kVMG9kghdBegwrtjxbuX";
 const kegiatanId = "s5ryUqy4yk9DAHgVCfDw";
 const tanggalHariIni = new Date().toLocaleDateString("en-CA");
+
+/* ================= AUDIO BEEP ================= */
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+function beep(freq){
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  osc.frequency.value = freq;
+  osc.start();
+  gain.gain.exponentialRampToValueAtTime(
+    0.0001, audioCtx.currentTime + 0.2
+  );
+  osc.stop(audioCtx.currentTime + 0.2);
+}
+const beepOk  = ()=>beep(1000);
+const beepErr = ()=>beep(300);
 
 /* ================= PESERTA ================= */
 const pesertaMap = {};
@@ -155,7 +155,6 @@ async function loadPeserta(){
     where("lembagaId","==",lembagaId),
     where("kegiatanId","==",kegiatanId)
   ));
-
   snap.forEach(d=>{
     const nama = d.data().namaPeserta.split(":").pop().trim().toUpperCase();
     pesertaMap[nama] = { id:d.id, nama };
@@ -166,6 +165,7 @@ loadPeserta();
 /* ================= KAMERA ================= */
 let scanner = null;
 let kameraAktif = false;
+let sedangKirim = false;
 
 window.startCamera = async function(){
   if(kameraAktif) return;
@@ -176,22 +176,21 @@ window.startCamera = async function(){
   await scanner.start(
     { facingMode:"environment" },
     { fps:10, qrbox:250 },
-    async (text) => {
+    async (text)=>{
       if(!text.includes(":")) return;
 
       const nama = text.split(":").pop().trim().toUpperCase();
       if(!pesertaMap[nama]) return;
 
-      await kirimAbsen(pesertaMap[nama]);
-
-      /* ⏸ PAUSE + OVERLAY PUTIH */
       scanner.pause();
       scanOverlay.classList.add("active");
 
-      setTimeout(() => {
+      await kirimAbsen(pesertaMap[nama]);
+
+      setTimeout(()=>{
         scanOverlay.classList.remove("active");
         scanner.resume();
-      }, 1500);
+      }, 1200);
     }
   );
 };
@@ -206,32 +205,34 @@ window.stopCamera = async function(){
 
 /* ================= ABSEN ================= */
 async function kirimAbsen(p){
-  const cek = await getDocs(query(
-    collection(db,"absen_kegiatan"),
-    where("pesertaId","==",p.id),
-    where("kegiatanId","==",kegiatanId),
-    where("tanggal","==",tanggalHariIni)
-  ));
+  if(sedangKirim) return;
+  sedangKirim = true;
 
-  if(!cek.empty){
+  const docId = `${kegiatanId}_${p.id}_${tanggalHariIni}`;
+
+  try {
+    await setDoc(doc(db,"absen_kegiatan",docId),{
+      lembagaId,
+      kegiatanId,
+      pesertaId:p.id,
+      nama:p.nama,
+      tanggal:tanggalHariIni,
+      point:5,
+      dibuat:serverTimestamp()
+    });
+
+    msgOk.style.display="block";
+    msgErr.style.display="none";
+    beepOk();
+    loadRekap();
+
+  } catch(e){
     msgErr.style.display="block";
     msgOk.style.display="none";
-    return;
+    beepErr();
+  } finally {
+    sedangKirim = false;
   }
-
-  await addDoc(collection(db,"absen_kegiatan"),{
-    lembagaId,
-    kegiatanId,
-    pesertaId:p.id,
-    nama:p.nama,
-    tanggal:tanggalHariIni,
-    point:5,
-    dibuat:serverTimestamp()
-  });
-
-  msgOk.style.display="block";
-  msgErr.style.display="none";
-  loadRekap();
 }
 
 /* ================= REKAP ================= */
@@ -245,7 +246,7 @@ async function loadRekap(){
   const map = {};
   pesertaSnap.forEach(d=>{
     map[d.id] = {
-      nama: d.data().namaPeserta.split(":").pop(),
+      nama:d.data().namaPeserta.split(":").pop(),
       hadir:false,
       point:0
     };
@@ -253,14 +254,13 @@ async function loadRekap(){
 
   const absenSnap = await getDocs(query(
     collection(db,"absen_kegiatan"),
-    where("kegiatanId","==",kegiatanId)
+    where("kegiatanId","==",kegiatanId),
+    where("tanggal","==",tanggalHariIni)
   ));
 
   absenSnap.forEach(d=>{
     const r = d.data();
-    if(!map[r.pesertaId]) return;
-
-    if(r.tanggal === tanggalHariIni){
+    if(map[r.pesertaId]){
       map[r.pesertaId].hadir = true;
       map[r.pesertaId].point += r.point;
     }
@@ -271,13 +271,12 @@ async function loadRekap(){
   rekap.innerHTML="";
   data.forEach((r,i)=>{
     rekap.innerHTML += `
-      <tr class="${r.hadir ? "hadir":"belum"}">
+      <tr class="${r.hadir?"hadir":"belum"}">
         <td>${i+1}</td>
         <td>${r.nama}</td>
-        <td>${r.hadir ? "Hadir":"Belum"}</td>
+        <td>${r.hadir?"Hadir":"Belum"}</td>
         <td>${r.point}</td>
-      </tr>
-    `;
+      </tr>`;
   });
 }
 loadRekap();
