@@ -109,7 +109,7 @@ import { initializeApp } from
 "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 
 import {
-  getFirestore, collection, getDocs,
+  getFirestore, collection, getDocs, getDoc,
   query, where, doc, setDoc, serverTimestamp
 } from
 "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
@@ -208,10 +208,25 @@ async function kirimAbsen(p){
   if(sedangKirim) return;
   sedangKirim = true;
 
-  const docId = `${kegiatanId}_${p.id}_${tanggalHariIni}`;
+  const docRef = doc(
+    db,
+    "absen_kegiatan",
+    `${kegiatanId}_${p.id}_${tanggalHariIni}`
+  );
 
   try {
-    await setDoc(doc(db,"absen_kegiatan",docId),{
+    /* 🔍 TAMBAHAN DI SINI */
+    const cek = await getDoc(docRef);
+    if(cek.exists()){
+      msgErr.innerText = `❌ ${p.nama} sudah tercatat hari ini`;
+      msgErr.style.display="block";
+      msgOk.style.display="none";
+      beepErr();
+      return; // ⛔ stop di sini
+    }
+
+    /* ⬇️ KODE LAMAMU TETAP */
+    await setDoc(docRef,{
       lembagaId,
       kegiatanId,
       pesertaId:p.id,
@@ -221,12 +236,14 @@ async function kirimAbsen(p){
       dibuat:serverTimestamp()
     });
 
+    msgOk.innerText = `✅ ${p.nama} berhasil dicatat`;
     msgOk.style.display="block";
     msgErr.style.display="none";
     beepOk();
     loadRekap();
 
   } catch(e){
+    msgErr.innerText = "❌ Gagal menyimpan data";
     msgErr.style.display="block";
     msgOk.style.display="none";
     beepErr();
