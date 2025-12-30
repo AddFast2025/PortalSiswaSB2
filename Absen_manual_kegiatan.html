@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Absen Susulan</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+body{
+  font-family:Arial;
+  background:#f4f6f8;
+  padding:20px;
+}
+.card{
+  max-width:500px;
+  margin:auto;
+  background:#fff;
+  padding:20px;
+  border-radius:12px;
+  box-shadow:0 4px 12px rgba(0,0,0,.1);
+}
+h2{text-align:center}
+label{
+  font-weight:bold;
+  margin-top:12px;
+  display:block;
+}
+select,input,button{
+  width:100%;
+  padding:10px;
+  margin-top:5px;
+}
+button{
+  background:#2e7d32;
+  color:white;
+  border:none;
+  border-radius:8px;
+  margin-top:15px;
+  cursor:pointer;
+}
+.notice{
+  display:none;
+  margin-top:12px;
+  padding:10px;
+  border-radius:6px;
+}
+.ok{background:#e8f5e9;color:#2e7d32}
+.err{background:#ffebee;color:#c62828}
+
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:10px;
+}
+th,td{
+  border:1px solid #ddd;
+  padding:8px;
+  text-align:center;
+}
+th{
+  background:#f1f5f9;
+}
+.manual{background:#fff3cd}
+.scan{background:#e8f5e9}
+
+
+
+
+
+</style>
+</head>
+
+<body>
+
+<div class="card">
+  <h2>📝 Absen Susulan</h2>
+
+  <label>Tanggal</label>
+  <input type="date" id="tanggal">
+
+  <label>Nama Siswa</label>
+  <select id="siswa">
+    <option value="">-- Pilih Siswa --</option>
+  </select>
+
+  <button onclick="kirim()">✅ Kirim Absen</button>
+
+  <div id="msgOk" class="notice ok">Absen berhasil disimpan</div>
+  <div id="msgErr" class="notice err"></div>
+
+<hr>
+
+<h3>📜 Riwayat Absen Siswa</h3>
+<table>
+  <thead>
+    <tr>
+      <th>No</th>
+      <th>Tanggal</th>
+      <th>Jenis</th>
+      <th>Poin</th>
+    </tr>
+  </thead>
+  <tbody id="riwayat"></tbody>
+</table>
+
+
+
+</div>
+
+<script type="module">
+import { initializeApp } from
+"https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import {
+  getFirestore, collection, getDocs, query, where,
+  doc, getDoc, setDoc, serverTimestamp
+} from
+"https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+/* FIREBASE */
+const firebaseConfig = {
+  apiKey:"AIzaSyD8SIXXPm_c-TJiaRjHbrishFtU2NICm9M",
+  authDomain:"datasiswa-c10f4.firebaseapp.com",
+  projectId:"datasiswa-c10f4"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+/* KONFIG (samakan dengan sistem utama) */
+const lembagaId  = "kVMG9kghdBegwrtjxbuX";
+const kegiatanId = "s5ryUqy4yk9DAHgVCfDw";
+
+const siswaEl = document.getElementById("siswa");
+const tanggalEl = document.getElementById("tanggal");
+const msgOk = document.getElementById("msgOk");
+const msgErr = document.getElementById("msgErr");
+const riwayatEl = document.getElementById("riwayat");
+async function loadRiwayat(pesertaId){
+  riwayatEl.innerHTML =
+    `<tr><td colspan="4">Memuat...</td></tr>`;
+
+  const snap = await getDocs(query(
+    collection(db,"absen_kegiatan"),
+    where("kegiatanId","==",kegiatanId),
+    where("pesertaId","==",pesertaId)
+  ));
+
+  if(snap.empty){
+    riwayatEl.innerHTML =
+      `<tr><td colspan="4">Belum ada data</td></tr>`;
+    return;
+  }
+
+  const data = [];
+  snap.forEach(d=>{
+    data.push(d.data());
+  });
+
+  data.sort((a,b)=>b.tanggal.localeCompare(a.tanggal));
+
+  riwayatEl.innerHTML="";
+  data.forEach((r,i)=>{
+    riwayatEl.innerHTML += `
+      <tr class="${r.manual ? "manual" : "scan"}">
+        <td>${i+1}</td>
+        <td>${r.tanggal}</td>
+        <td>${r.manual ? "Susulan" : "Scan QR"}</td>
+        <td>${r.point}</td>
+      </tr>`;
+  });
+}
+
+
+
+
+
+
+
+
+/* default tanggal hari ini */
+tanggalEl.value = new Date().toLocaleDateString("en-CA");
+
+/* LOAD SISWA */
+const pesertaMap = {};
+const snap = await getDocs(query(
+  collection(db,"peserta_kegiatan"),
+  where("kegiatanId","==",kegiatanId)
+));
+snap.forEach(d=>{
+  const nama = d.data().namaPeserta.split(":").pop();
+  pesertaMap[d.id] = nama;
+  siswaEl.innerHTML +=
+    `<option value="${d.id}">${nama}</option>`;
+});
+
+siswaEl.addEventListener("change", ()=>{
+  const id = siswaEl.value;
+  if(id) loadRiwayat(id);
+  else riwayatEl.innerHTML="";
+});
+
+
+
+
+
+
+/* KIRIM ABSEN */
+window.kirim = async function(){
+  msgOk.style.display="none";
+  msgErr.style.display="none";
+
+  const tanggal = tanggalEl.value;
+  const pesertaId = siswaEl.value;
+
+  if(!tanggal || !pesertaId){
+    msgErr.innerText="Lengkapi tanggal & siswa";
+    msgErr.style.display="block";
+    return;
+  }
+
+  const docId = `${kegiatanId}_${pesertaId}_${tanggal}`;
+  const ref = doc(db,"absen_kegiatan",docId);
+
+  const cek = await getDoc(ref);
+  if(cek.exists()){
+    msgErr.innerText="❌ Siswa sudah absen di tanggal ini";
+    msgErr.style.display="block";
+    return;
+  }
+
+  await setDoc(ref,{
+    lembagaId,
+    kegiatanId,
+    pesertaId,
+    nama: pesertaMap[pesertaId],
+    tanggal,
+    point: 5,
+    dibuat: serverTimestamp(),
+    manual: true
+  });
+
+  msgOk.style.display="block";
+};
+
+loadRiwayat(pesertaId);
+
+</script>
+
+</body>
+</html>
