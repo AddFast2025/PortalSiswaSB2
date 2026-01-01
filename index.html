@@ -1,119 +1,263 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Home - SDN Sidobandung II</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: system-ui, Arial, sans-serif;
-      text-align: center;
-      color: #0f172a;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      padding: 20px;
-      background: linear-gradient(160deg, #ffe0b2, #ffb74d, #ff9800);
-    }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Home - SDN Sidobandung II</title>
 
-    header img {
-      width: 160px;
-      height: 160px;
-      object-fit: contain;
-      margin-bottom: 16px;
-      border-radius: 50%;
-      background: linear-gradient(160deg, #d50000, #ff5252, #ffffff);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    }
+<style>
+body{
+  margin:0;
+  font-family:system-ui, Arial, sans-serif;
+  text-align:center;
+  color:#0f172a;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  min-height:100vh;
+  padding:20px;
+  background:linear-gradient(160deg,#ffe0b2,#ffb74d,#ff9800);
+}
 
-    h1 {
-      font-size: clamp(20px, 5vw, 30px);
-      margin: 0 0 28px;
-      font-weight: 700;
-    }
+header img{
+  width:160px;
+  height:160px;
+  object-fit:contain;
+  margin-bottom:16px;
+  border-radius:50%;
+  background:linear-gradient(160deg,#d50000,#ff5252,#ffffff);
+  box-shadow:0 4px 12px rgba(0,0,0,.15);
+}
 
-    .menu {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 14px;
-      width: 100%;
-      max-width: 360px;
-    }
+h1{
+  font-size:clamp(20px,5vw,30px);
+  margin:0 0 24px;
+  font-weight:700;
+}
 
-    .menu a {
-      display: block;
-      padding: 14px;
-      border-radius: 12px;
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 15px;
-      color: white;
-      background: #0284c7;
-      box-shadow: 0 6px 16px rgba(2, 132, 199, 0.35);
-      transition: background 0.2s, transform 0.1s;
-    }
+.menu{
+  width:100%;
+  max-width:360px;
+  margin-bottom:24px;
+}
 
-    .menu a:hover {
-      background: #0369a1;
-    }
+.menu a{
+  display:block;
+  padding:16px;
+  border-radius:14px;
+  text-decoration:none;
+  font-weight:600;
+  font-size:16px;
+  color:#fff;
+  background:#0284c7;
+  box-shadow:0 6px 16px rgba(2,132,199,.35);
+}
 
-    .menu a:active {
-      transform: scale(0.98);
-    }
+.menu a:active{transform:scale(.97)}
 
-    @media (max-width: 400px) {
-      .menu {
-        grid-template-columns: 1fr; /* satu kolom di layar kecil */
-      }
-    }
-  </style>
+/* ===== PENGUMUMAN ===== */
+.pengumuman{
+  width:100%;
+  max-width:360px;
+  background:#fff;
+  border-radius:14px;
+  padding:16px;
+  box-shadow:0 6px 18px rgba(0,0,0,.15);
+  text-align:left;
+}
+
+.pengumuman h2{
+  margin:0 0 10px;
+  font-size:18px;
+  text-align:center;
+}
+
+.tanggal{
+  font-size:12px;
+  color:#555;
+  text-align:center;
+  margin-bottom:10px;
+}
+
+.pengumuman img{
+  width:100%;
+  max-height:220px;
+  object-fit:contain;
+  margin:10px 0;
+  border-radius:8px;
+}
+
+.judul{
+  font-weight:700;
+  font-size:16px;
+  margin-bottom:6px;
+}
+
+
+.loading{
+  text-align:center;
+  color:#666;
+  font-size:14px;
+}
+
+.isi{
+  font-size:14px;
+  line-height:1.6;
+  white-space: pre-line; /* ⬅️ INI KUNCINYA */
+}
+
+
+
+
+</style>
 </head>
+
 <body>
-  <header>
-    <img src="https://i.imgur.com/RruvYpK.jpeg" alt="Logo Sekolah" width="110" height="110">
-  </header>
 
-  <h1>Portal Siswa SDN Sidobandung II</h1>
+<header>
+  <img src="https://i.imgur.com/RruvYpK.jpeg" alt="Logo Sekolah">
+</header>
 
-  <nav class="menu" id="menu"></nav>
+<h1>Portal Siswa SDN Sidobandung II</h1>
 
-  <script>
-    // 🔧 PENGATURAN TOMBOL (true = tampil, false = sembunyikan)
-    const menuVisibility = {
-      laporSubuh: true,
-      jurnalLiterasi: true,
-      lihatNilai: true,
-      bukuDigital: true,
-      soalLatihan: true,
-      mediaPembelajaran: true,
-      karyaku: true,
-      Hafalan: true,
-      pengumuman: true,
-      saranMasukan: true,
-      alwaqiah: true
-    };
+<nav class="menu">
+  <a href="https://addfast2025.github.io/Admin/lapor_subuh_2026.html">
+    📖 Lapor Subuh
+  </a>
+</nav>
 
-    // 🔗 DAFTAR MENU
-    const menuList = [
-   
-      { key: "laporSubuh", text: "📖 Lapor Subuh", link: "https://addfast2025.github.io/Admin/lapor_subuh_2026.html" },
-      
-      
-    ];
+<!-- ===== PENGUMUMAN ===== -->
+<section class="pengumuman" id="pengumumanBox">
+  <h2>📢 Pengumuman</h2>
+  <div class="loading">Memuat pengumuman...</div>
+</section>
 
-    // 🧩 GENERATE MENU
-    const menuContainer = document.getElementById("menu");
-    menuList.forEach(item => {
-      if (menuVisibility[item.key]) {
-        const a = document.createElement("a");
-        a.href = item.link;
-        a.textContent = item.text;
-        menuContainer.appendChild(a);
-      }
-    });
-  </script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import {
+  getFirestore, collection, query, where,
+  orderBy, limit, getDocs
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+/* ===== FIREBASE ===== */
+const firebaseConfig = {
+  apiKey:"AIzaSyD8SIXXPm_c-TJiaRjHbrishFtU2NICm9M",
+  authDomain:"datasiswa-c10f4.firebaseapp.com",
+  projectId:"datasiswa-c10f4"
+};
+
+
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+/* ===== LEMBAGA FIX ===== */
+const lembagaId = "kVMG9kghdBegwrtjxbuX";
+
+
+
+
+
+</script>
+
+
+
+
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import {
+  getFirestore, collection, query, where,
+  orderBy, limit, getDocs
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+/* ===== FIREBASE ===== */
+const firebaseConfig = {
+  apiKey:"AIzaSyD8SIXXPm_c-TJiaRjHbrishFtU2NICm9M",
+  authDomain:"datasiswa-c10f4.firebaseapp.com",
+  projectId:"datasiswa-c10f4"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+
+function driveThumb(url, size = 600){
+  if(!url) return "";
+  if(url.includes("thumbnail")) return url;
+
+  if(url.includes("uc?id=")){
+    return url.replace(
+      "https://drive.google.com/uc?id=",
+      "https://drive.google.com/thumbnail?id="
+    ) + "&sz=w" + size;
+  }
+
+  return url;
+}
+
+
+
+
+
+/* ===== LEMBAGA FIX ===== */
+const lembagaId = "kVMG9kghdBegwrtjxbuX";
+
+/* ===== LOAD PENGUMUMAN TERBARU ===== */
+async function loadPengumuman(){
+  const box = document.getElementById("pengumumanBox");
+  box.innerHTML = `<div class="loading">Memuat pengumuman...</div>`;
+
+  try{
+    const q = query(
+      collection(db,"pengumuman"),
+      where("lembagaId","==",lembagaId),
+      orderBy("dibuat","desc"),
+      limit(1)
+    );
+
+    const snap = await getDocs(q);
+
+    if(snap.empty){
+      box.innerHTML = `<div class="loading">Belum ada pengumuman</div>`;
+      return;
+    }
+
+    const d = snap.docs[0];
+    const x = d.data();
+
+    const tgl = x.dibuat?.toDate
+      ? x.dibuat.toDate().toLocaleDateString("id-ID")
+      : "";
+
+    box.innerHTML = `
+      <h2>📢 Pengumuman</h2>
+      ${tgl ? `<div class="tanggal">${tgl}</div>` : ``}
+      <div class="judul">${x.judul}</div>
+     ${x.foto ? `<img src="${driveThumb(x.foto)}">` : ``}
+
+      <div class="isi">${x.isi}</div>
+    `;
+
+  }catch(err){
+    console.error("ERROR PENGUMUMAN:", err);
+
+    box.innerHTML = `
+      <div class="loading">
+        ⚠️ Pengumuman belum bisa dimuat<br>
+        (index Firestore belum dibuat)
+      </div>
+    `;
+  }
+}
+
+loadPengumuman();
+</script>
+
+
+
+
+
+
 </body>
 </html>
