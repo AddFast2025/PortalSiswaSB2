@@ -81,15 +81,16 @@ h1{
 
 .pengumuman img{
   width:100%;
-  max-height:220px;
+  max-height:360px;      /* ⬅️ LEBIH BESAR */
   object-fit:contain;
-  margin:10px 0;
-  border-radius:8px;
+  margin:12px 0;
+  border-radius:10px;
+  cursor: zoom-in;       /* ⬅️ PETUNJUK BISA DI ZOOM */
 }
 
 .judul{
   font-weight:700;
-  font-size:16px;
+  font-size:18px;
   margin-bottom:6px;
 }
 
@@ -101,16 +102,36 @@ h1{
 }
 
 .isi{
-  font-size:14px;
+  font-size:18px;
   line-height:1.6;
   white-space: pre-line; /* ⬅️ INI KUNCINYA */
 }
 
 
+#imgOverlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.9);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+}
+
+#imgOverlay img{
+  max-width:95%;
+  max-height:95%;
+  object-fit:contain;
+  cursor: zoom-out;
+}
 
 
 </style>
 </head>
+
+<div id="imgOverlay" onclick="this.style.display='none'">
+  <img id="imgFull">
+</div>
 
 <body>
 
@@ -155,6 +176,12 @@ const db = getFirestore(app);
 const lembagaId = "kVMG9kghdBegwrtjxbuX";
 
 
+function openImage(src){
+  const overlay = document.getElementById("imgOverlay");
+  const img = document.getElementById("imgFull");
+  img.src = src;
+  overlay.style.display = "flex";
+}
 
 
 
@@ -234,7 +261,8 @@ async function loadPengumuman(){
       <h2>📢 Pengumuman</h2>
       ${tgl ? `<div class="tanggal">${tgl}</div>` : ``}
       <div class="judul">${x.judul}</div>
-     ${x.foto ? `<img src="${driveThumb(x.foto)}">` : ``}
+  <img src="${driveThumb(x.foto,800)}" onclick="openImage(this.src)">
+
 
       <div class="isi">${x.isi}</div>
     `;
