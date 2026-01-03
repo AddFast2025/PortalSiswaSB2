@@ -252,6 +252,11 @@ async function loadPengumuman(){
 
     const d = snap.docs[0];
     const x = d.data();
+    // ❌ Jika judul = 0 → jangan tampilkan pengumuman sama sekali
+if (x.judul === "0" || x.judul === 0) {
+  box.style.display = "none";
+  return;
+}
 
     const tgl = x.dibuat?.toDate
       ? x.dibuat.toDate().toLocaleDateString("id-ID")
@@ -289,3 +294,4 @@ loadPengumuman();
 
 </body>
 </html>
+
